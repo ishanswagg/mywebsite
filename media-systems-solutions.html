@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Systems Solutions — Intelligent Technology Environments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #080808;
+    --charcoal: #111111;
+    --graphite: #1a1a1a;
+    --dark-mid: #222222;
+    --panel: #161616;
+    --border: rgba(255,255,255,0.07);
+    --border-gold: rgba(196,164,98,0.3);
+    --gold: #C4A462;
+    --gold-light: #D4B87A;
+    --gold-dim: rgba(196,164,98,0.6);
+    --white: #FFFFFF;
+    --off-white: #F5F3EE;
+    --text-muted: rgba(255,255,255,0.45);
+    --text-mid: rgba(255,255,255,0.7);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Inter', sans-serif;
+    --font-label: 'Space Grotesk', sans-serif;
+    --ease-luxury: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s var(--ease-luxury), height 0.3s var(--ease-luxury), opacity 0.3s;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s var(--ease-luxury), width 0.4s var(--ease-luxury), height 0.4s var(--ease-luxury), opacity 0.3s;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* Loading screen */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--black);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s var(--ease-luxury), visibility 0.8s;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .loader-logo {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--white);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s var(--ease-expo) forwards;
+  }
+  .loader-bar-track {
+    width: 180px;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .loader-bar {
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    width: 0%;
+    animation: loadBar 1.8s 0.5s var(--ease-expo) forwards;
+  }
+  .loader-text {
+    font-family: var(--font-label);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--text-muted);
+    margin-top: 1.5rem;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.6s var(--ease-expo) forwards;
+  }
+  @keyframes loadBar { to { width: 100%; } }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 1.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.6s var(--ease-luxury), padding 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom-color: var(--border);
+    padding: 1rem 4rem;
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .nav-logo-sub {
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 100%;
+    height: 1px;
+    background: var(--gold);
+    transition: right 0.4s var(--ease-luxury);
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { right: 0; }
+  .nav-cta {
+    font-family: var(--font-label);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 0.7rem 1.6rem;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* Hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--white);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  /* Mobile nav */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8,8,8,0.97);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .mobile-nav.open { opacity: 1; pointer-events: all; }
+  .mobile-nav a {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--white);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  .mobile-nav a:hover { color: var(--gold); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-video-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero-video-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Cinematic gradient overlay */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(8,8,8,0.3) 0%, transparent 30%, transparent 50%, rgba(8,8,8,0.85) 100%),
+      linear-gradient(to right, rgba(8,8,8,0.7) 0%, transparent 60%);
+    z-index: 1;
+  }
+  .hero-grid-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image:
+      linear-gradient(rgba(196,164,98,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196,164,98,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 4rem 8rem;
+    max-width: 900px;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 2.5s var(--ease-expo) forwards;
+  }
+  .hero-eyebrow-line {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .hero-eyebrow-text {
+    font-family: var(--font-label);
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 2.7s var(--ease-expo) forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .hero-subheadline {
+    font-family: var(--font-body);
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-mid);
+    max-width: 560px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 2.9s var(--ease-expo) forwards;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 3.1s var(--ease-expo) forwards;
+  }
+  .btn-primary {
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 1rem 2.4rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s, transform 0.4s var(--ease-luxury);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.4s var(--ease-luxury);
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    padding: 1rem 2.4rem;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: border-color 0.3s, color 0.3s, transform 0.4s var(--ease-luxury);
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  .hero-stats {
+    position: absolute;
+    bottom: 3rem;
+    right: 4rem;
+    z-index: 2;
+    display: flex;
+    gap: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 3.3s var(--ease-expo) forwards;
+  }
+  .hero-stat { text-align: right; }
+  .hero-stat-num {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+  }
+  .hero-stat-num span { color: var(--gold); }
+  .hero-stat-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    opacity: 0;
+    animation: fadeIn 1s 3.5s forwards;
+  }
+  .scroll-indicator-text {
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* Sections base */
+  section { position: relative; }
+  .section-inner { max-width: 1400px; margin: 0 auto; padding: 0 4rem; }
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-eyebrow-line { width: 30px; height: 1px; background: var(--gold); }
+  .section-eyebrow-text {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--gold-light); }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s var(--ease-expo), transform 0.9s var(--ease-expo);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+  .reveal-delay-6 { transition-delay: 0.6s; }
+  .reveal-delay-7 { transition-delay: 0.7s; }
+  .reveal-delay-8 { transition-delay: 0.8s; }
+
+  /* ─── MARQUEE ─── */
+  .marquee-strip {
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-block;
+    animation: marquee 30s linear infinite;
+  }
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-right: 3rem;
+    font-family: var(--font-label);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .marquee-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* ─── SOLUTIONS ─── */
+  .solutions-section {
+    padding: 8rem 0;
+    background: var(--charcoal);
+  }
+  .solutions-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    margin-bottom: 5rem;
+  }
+  .solutions-intro {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+  }
+  .solutions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .solution-card {
+    background: var(--graphite);
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.4s var(--ease-luxury);
+  }
+  .solution-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-luxury);
+  }
+  .solution-card:hover { background: var(--dark-mid); }
+  .solution-card:hover::before { transform: scaleX(1); }
+  .solution-card:hover .solution-icon { color: var(--gold); }
+  .solution-card:hover .solution-arrow { opacity: 1; transform: translate(0, 0); }
+  .solution-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    color: rgba(255,255,255,0.3);
+    transition: color 0.4s;
+  }
+  .solution-num {
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .solution-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .solution-desc {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .solution-arrow {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    opacity: 0;
+    transform: translate(-5px, 5px);
+    transition: opacity 0.3s, transform 0.4s var(--ease-luxury);
+  }
+
+  /* ─── INDUSTRIES ─── */
+  .industries-section {
+    padding: 8rem 0;
+    background: var(--black);
+  }
+  .industries-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 5rem;
+  }
+  .industry-card {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: var(--graphite);
+    cursor: pointer;
+  }
+  .industry-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.8s var(--ease-luxury);
+  }
+  .industry-card:hover .industry-bg { transform: scale(1.06); }
+  .industry-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0.2) 60%, transparent 100%);
+    z-index: 1;
+  }
+  .industry-content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 2rem;
+    z-index: 2;
+  }
+  .industry-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .industry-name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 300;
+    line-height: 1.1;
+  }
+  .industry-detail {
+    font-size: 0.75rem;
+    color: var(--text-mid);
+    margin-top: 0.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s var(--ease-luxury), opacity 0.4s;
+    opacity: 0;
+  }
+  .industry-card:hover .industry-detail { max-height: 60px; opacity: 1; }
+
+  /* Industry visual backgrounds using CSS */
+  .ind-corporate { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+  .ind-hospitality { background: linear-gradient(135deg, #2d1b00 0%, #4a2e00 50%, #6b4200 100%); }
+  .ind-residential { background: linear-gradient(135deg, #0d1b2a 0%, #1b2a3b 50%, #243b55 100%); }
+  .ind-retail { background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #3d2a5e 100%); }
+  .ind-healthcare { background: linear-gradient(135deg, #0a1628 0%, #0e2040 50%, #122a52 100%); }
+  .ind-industrial { background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #333333 100%); }
+
+  /* Industry card SVG scenes */
+  .ind-scene { position: absolute; inset: 0; opacity: 0.35; }
+
+  /* ─── STATS ─── */
+  .stats-section {
+    padding: 6rem 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .stat-item {
+    padding: 3rem;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-number .stat-unit { color: var(--gold); font-size: 0.7em; }
+  .stat-label {
+    font-family: var(--font-label);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .stat-desc {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  /* ─── PROJECTS ─── */
+  .projects-section {
+    padding: 8rem 0;
+    background: var(--charcoal);
+  }
+  .projects-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 5rem;
+  }
+  .projects-filter {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .filter-btn {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    color: var(--gold);
+    border-color: var(--border-gold);
+    background: rgba(196,164,98,0.05);
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .project-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--graphite);
+    cursor: pointer;
+    group: true;
+  }
+  .project-card.large { grid-column: span 2; }
+  .project-visual {
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card.large .project-visual { aspect-ratio: 21/9; }
+  .project-scene {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.8s var(--ease-luxury);
+  }
+  .project-card:hover .project-scene { transform: scale(1.04); }
+  .project-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,8,8,0.4);
+    transition: background 0.4s;
+  }
+  .project-card:hover .project-overlay { background: rgba(8,8,8,0.2); }
+  .project-info {
+    padding: 1.8rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .project-meta { flex: 1; }
+  .project-tag {
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .project-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  .project-location {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+  }
+  .project-arrow {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    transition: background 0.3s, transform 0.4s var(--ease-luxury);
+  }
+  .project-card:hover .project-arrow { background: var(--gold); color: var(--black); transform: rotate(45deg); }
+
+  /* ─── ABOUT / PHILOSOPHY ─── */
+  .about-section {
+    padding: 10rem 0;
+    background: var(--black);
+    overflow: hidden;
+  }
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8rem;
+    align-items: center;
+  }
+  .about-visual {
+    position: relative;
+  }
+  .about-main-image {
+    width: 100%;
+    aspect-ratio: 4/5;
+    background: var(--graphite);
+    position: relative;
+    overflow: hidden;
+  }
+  .about-badge {
+    position: absolute;
+    bottom: -2rem;
+    right: -2rem;
+    width: 130px;
+    height: 130px;
+    background: var(--gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+  }
+  .about-badge-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--black);
+    line-height: 1;
+  }
+  .about-badge-label {
+    font-family: var(--font-label);
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(8,8,8,0.7);
+    margin-top: 0.3rem;
+  }
+  .about-text { }
+  .about-body {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: var(--text-mid);
+    margin-top: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .about-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .about-value {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .about-value:hover { border-color: var(--border-gold); }
+  .about-value-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+  .about-value-text { font-size: 0.8rem; line-height: 1.6; color: var(--text-muted); }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials-section {
+    padding: 8rem 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+  }
+  .testimonials-track-wrap {
+    overflow: hidden;
+    margin-top: 4rem;
+    position: relative;
+  }
+  .testimonials-track-wrap::before,
+  .testimonials-track-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 120px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .testimonials-track-wrap::before { left: 0; background: linear-gradient(to right, var(--panel), transparent); }
+  .testimonials-track-wrap::after { right: 0; background: linear-gradient(to left, var(--panel), transparent); }
+  .testimonials-track {
+    display: flex;
+    gap: 2rem;
+    animation: scrollTestimonials 45s linear infinite;
+  }
+  .testimonials-track:hover { animation-play-state: paused; }
+  @keyframes scrollTestimonials { to { transform: translateX(-50%); } }
+  .testimonial-card {
+    flex-shrink: 0;
+    width: 400px;
+    background: var(--graphite);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    transition: border-color 0.3s;
+  }
+  .testimonial-card:hover { border-color: var(--border-gold); }
+  .testimonial-quote-mark {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 0.5;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .testimonial-text {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.6;
+    font-style: italic;
+    color: var(--text-mid);
+    margin-bottom: 2rem;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .testimonial-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--dark-mid);
+    border: 1px solid var(--border-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .testimonial-name {
+    font-family: var(--font-label);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .testimonial-role { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+  /* ─── PARTNERS ─── */
+  .partners-section {
+    padding: 5rem 0;
+    background: var(--charcoal);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .partners-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .partners-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+  }
+  .partner-item {
+    border-right: 1px solid var(--border);
+    padding: 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+  }
+  .partner-item:last-child { border-right: none; }
+  .partner-item:hover { background: rgba(196,164,98,0.03); }
+  .partner-name {
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    transition: color 0.3s;
+  }
+  .partner-item:hover .partner-name { color: rgba(255,255,255,0.6); }
+
+  /* ─── CONTACT ─── */
+  .contact-section {
+    padding: 8rem 0;
+    background: var(--black);
+  }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: 8rem;
+    align-items: start;
+  }
+  .contact-info { }
+  .contact-detail {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .contact-detail-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .contact-detail-value {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--white);
+  }
+  .contact-form { }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .form-group.full { grid-column: span 2; }
+  .form-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .form-input, .form-select, .form-textarea {
+    background: var(--graphite);
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 0.9rem 1.2rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold-dim); }
+  .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.2); }
+  .form-textarea { resize: vertical; min-height: 120px; }
+  .form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C4A462' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+  .form-select option { background: var(--graphite); }
+  .form-submit {
+    width: 100%;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 1.1rem 2rem;
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    margin-top: 0.5rem;
+  }
+  .form-submit:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* Floating CTA */
+  .float-cta {
+    position: fixed;
+    bottom: 2.5rem;
+    right: 2.5rem;
+    z-index: 500;
+    background: var(--gold);
+    color: var(--black);
+    text-decoration: none;
+    padding: 0.9rem 1.6rem;
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 8px 32px rgba(196,164,98,0.25);
+    transition: transform 0.4s var(--ease-luxury), background 0.3s, opacity 0.4s;
+    opacity: 0;
+  }
+  .float-cta.visible { opacity: 1; }
+  .float-cta:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .float-cta-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--black); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } }
+
+  /* Footer */
+  footer {
+    background: var(--charcoal);
+    border-top: 1px solid var(--border);
+    padding: 4rem 0 2rem;
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 4rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .footer-brand-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+  .footer-brand-sub {
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .footer-tagline { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .footer-col-title {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-links a {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy { font-size: 0.7rem; color: var(--text-muted); }
+  .footer-legal { display: flex; gap: 2rem; }
+  .footer-legal a { font-size: 0.7rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+  .footer-legal a:hover { color: var(--white); }
+
+  /* ─── GLASSMORPHISM PANEL ─── */
+  .glass-panel {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1100px) {
+    .solutions-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-item { border-bottom: 1px solid var(--border); }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.large { grid-column: span 1; }
+    .about-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .partners-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .contact-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .industries-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    nav.scrolled { padding: 0.8rem 1.5rem; }
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    .mobile-nav { display: flex; }
+    .section-inner { padding: 0 1.5rem; }
+    .hero-content { padding: 0 1.5rem 6rem; }
+    .hero-stats { right: 1.5rem; gap: 1.5rem; }
+    .solutions-header { grid-template-columns: 1fr; gap: 1.5rem; }
+    .solutions-grid { grid-template-columns: 1fr; }
+    .industries-grid { grid-template-columns: 1fr; }
+    .projects-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+    .about-badge { right: 0; bottom: -1rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .partners-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    .hero-stat-num { font-size: 1.6rem; }
+    .solutions-section, .industries-section, .stats-section, .projects-section, .about-section, .testimonials-section, .contact-section { padding: 5rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-logo">MSS</div>
+  <div class="loader-bar-track"><div class="loader-bar"></div></div>
+  <div class="loader-text">Media Systems Solutions</div>
+</div>
+
+<!-- Floating CTA -->
+<a href="#contact" class="float-cta" id="floatCta">
+  <div class="float-cta-dot"></div>
+  Schedule Consultation
+</a>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    MSS
+    <span class="nav-logo-sub">Media Systems Solutions</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="#industries">Industries</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get Started</a>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#solutions" class="mobile-link">Solutions</a>
+  <a href="#industries" class="mobile-link">Industries</a>
+  <a href="#projects" class="mobile-link">Projects</a>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-video-bg" aria-hidden="true">
+    <!-- Animated SVG hero background simulating a cinematic command center -->
+    <svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" class="hero-video-canvas" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="hg1" cx="30%" cy="60%" r="60%">
+          <stop offset="0%" stop-color="#1a1200" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#080808" stop-opacity="1"/>
+        </radialGradient>
+        <radialGradient id="hg2" cx="80%" cy="30%" r="50%">
+          <stop offset="0%" stop-color="#0a0a1f" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#080808" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glowStrong">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="screen1clip"><rect x="150" y="140" width="340" height="200" rx="2"/></clipPath>
+        <clipPath id="screen2clip"><rect x="520" y="100" width="460" height="290" rx="2"/></clipPath>
+        <clipPath id="screen3clip"><rect x="1010" y="140" width="280" height="180" rx="2"/></clipPath>
+      </defs>
+
+      <!-- Background gradient -->
+      <rect width="1400" height="900" fill="#080808"/>
+      <rect width="1400" height="900" fill="url(#hg1)" opacity="0.8"/>
+      <rect width="1400" height="900" fill="url(#hg2)"/>
+
+      <!-- Architectural floor lines -->
+      <line x1="0" y1="600" x2="1400" y2="600" stroke="rgba(196,164,98,0.06)" stroke-width="1"/>
+      <line x1="0" y1="700" x2="1400" y2="700" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+
+      <!-- Grid overlay -->
+      <g opacity="0.04">
+        <line x1="0" y1="120" x2="1400" y2="120" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="0" y1="240" x2="1400" y2="240" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="0" y1="360" x2="1400" y2="360" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="0" y1="480" x2="1400" y2="480" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="280" y1="0" x2="280" y2="900" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="560" y1="0" x2="560" y2="900" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="840" y1="0" x2="840" y2="900" stroke="#C4A462" stroke-width="0.5"/>
+        <line x1="1120" y1="0" x2="1120" y2="900" stroke="#C4A462" stroke-width="0.5"/>
+      </g>
+
+      <!-- Main video wall bank - large center screen -->
+      <rect x="520" y="100" width="460" height="290" fill="#0a0a1a" stroke="rgba(196,164,98,0.3)" stroke-width="1.5"/>
+      <clipPath id="cclip"><use href="#screen2clip"/></clipPath>
+      <!-- Building facade in main screen -->
+      <g clip-path="url(#screen2clip)">
+        <rect x="520" y="100" width="460" height="290" fill="#060614"/>
+        <!-- Building silhouette -->
+        <rect x="580" y="180" width="80" height="210" fill="#0d1a3a"/>
+        <rect x="670" y="150" width="120" height="240" fill="#0f1e40"/>
+        <rect x="800" y="170" width="90" height="220" fill="#0d1a3a"/>
+        <rect x="900" y="200" width="60" height="190" fill="#0a1628"/>
+        <!-- Window lights -->
+        <rect x="590" y="190" width="12" height="8" fill="rgba(196,164,98,0.6)" rx="1"/>
+        <rect x="612" y="190" width="12" height="8" fill="rgba(196,164,98,0.4)" rx="1"/>
+        <rect x="634" y="190" width="12" height="8" fill="rgba(196,164,98,0.7)" rx="1"/>
+        <rect x="590" y="210" width="12" height="8" fill="rgba(196,164,98,0.3)" rx="1"/>
+        <rect x="612" y="210" width="12" height="8" fill="rgba(196,164,98,0.5)" rx="1"/>
+        <rect x="680" y="165" width="14" height="9" fill="rgba(100,140,255,0.5)" rx="1"/>
+        <rect x="704" y="165" width="14" height="9" fill="rgba(100,140,255,0.3)" rx="1"/>
+        <rect x="728" y="165" width="14" height="9" fill="rgba(100,140,255,0.6)" rx="1"/>
+        <rect x="680" y="188" width="14" height="9" fill="rgba(100,140,255,0.4)" rx="1"/>
+        <rect x="760" y="165" width="14" height="9" fill="rgba(196,164,98,0.5)" rx="1"/>
+        <rect x="784" y="165" width="14" height="9" fill="rgba(196,164,98,0.3)" rx="1"/>
+        <rect x="808" y="175" width="12" height="8" fill="rgba(100,140,255,0.4)" rx="1"/>
+        <rect x="830" y="175" width="12" height="8" fill="rgba(196,164,98,0.5)" rx="1"/>
+        <!-- HUD overlay on building -->
+        <rect x="680" y="200" width="60" height="30" fill="none" stroke="rgba(196,164,98,0.4)" stroke-width="0.75"/>
+        <line x1="680" y1="200" x2="670" y2="190" stroke="rgba(196,164,98,0.4)" stroke-width="0.75"/>
+        <text x="685" y="213" fill="rgba(196,164,98,0.8)" font-size="6" font-family="monospace">CAM-07</text>
+        <text x="685" y="224" fill="rgba(196,164,98,0.5)" font-size="5" font-family="monospace">ACTIVE · REC</text>
+        <!-- Scan line effect -->
+        <rect x="520" y="100" width="460" height="290" fill="none" stroke="rgba(100,200,255,0.05)" stroke-width="0"/>
+        <line x1="520" y1="245" x2="980" y2="245" stroke="rgba(100,200,255,0.12)" stroke-width="1">
+          <animate attributeName="y1" values="100;390;100" dur="5s" repeatCount="indefinite"/>
+          <animate attributeName="y2" values="100;390;100" dur="5s" repeatCount="indefinite"/>
+        </line>
+      </g>
+      <!-- Screen border glow -->
+      <rect x="520" y="100" width="460" height="290" fill="none" stroke="rgba(196,164,98,0.4)" stroke-width="1.5" filter="url(#glow)"/>
+      <!-- Screen label -->
+      <text x="524" y="118" fill="rgba(196,164,98,0.5)" font-size="7" font-family="monospace" letter-spacing="2">MAIN DISPLAY · LIVE FEED</text>
+
+      <!-- Left monitor bank -->
+      <rect x="150" y="140" width="340" height="200" fill="#080810" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <g clip-path="url(#screen1clip)">
+        <!-- Security grid feeds -->
+        <line x1="320" y1="140" x2="320" y2="340" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <line x1="150" y1="240" x2="490" y2="240" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <!-- Cam 1: lobby -->
+        <rect x="150" y="140" width="170" height="100" fill="#0a0a12"/>
+        <rect x="180" y="160" width="110" height="60" fill="#0d0d1e"/>
+        <rect x="185" y="165" width="40" height="50" fill="#10102a" opacity="0.7"/>
+        <rect x="232" y="165" width="50" height="50" fill="#0e0e25" opacity="0.7"/>
+        <text x="155" y="232" fill="rgba(100,200,255,0.5)" font-size="5" font-family="monospace">CAM-01 · LOBBY</text>
+        <!-- Cam 2: entrance -->
+        <rect x="322" y="140" width="168" height="100" fill="#0a0a0a"/>
+        <rect x="340" y="155" width="130" height="70" fill="#111"/>
+        <rect x="360" y="160" width="30" height="60" fill="#1a1a1a" opacity="0.8"/>
+        <text x="327" y="232" fill="rgba(100,200,255,0.5)" font-size="5" font-family="monospace">CAM-02 · ENTRANCE</text>
+        <!-- Cam 3: parking -->
+        <rect x="150" y="241" width="170" height="99" fill="#08080e"/>
+        <text x="155" y="333" fill="rgba(100,200,255,0.5)" font-size="5" font-family="monospace">CAM-03 · PARKING</text>
+        <!-- Cam 4: corridor -->
+        <rect x="322" y="241" width="168" height="99" fill="#090909"/>
+        <rect x="330" y="250" width="150" height="80" fill="#0c0c0c"/>
+        <rect x="380" y="255" width="50" height="70" fill="#111" opacity="0.6"/>
+        <text x="327" y="333" fill="rgba(100,200,255,0.5)" font-size="5" font-family="monospace">CAM-04 · CORRIDOR</text>
+        <!-- REC indicators -->
+        <circle cx="483" cy="148" r="3" fill="#ff3333" opacity="0.9"><animate attributeName="opacity" values="0.9;0.2;0.9" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="483" cy="248" r="3" fill="#ff3333" opacity="0.9"><animate attributeName="opacity" values="0.9;0.2;0.9" dur="1.5s" begin="0.75s" repeatCount="indefinite"/></circle>
+      </g>
+
+      <!-- Right panel -->
+      <rect x="1010" y="140" width="280" height="180" fill="#080810" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <g clip-path="url(#screen3clip)">
+        <!-- Floor plan / access control -->
+        <rect x="1010" y="140" width="280" height="180" fill="#080812"/>
+        <!-- Floor plan lines -->
+        <rect x="1030" y="160" width="240" height="140" fill="none" stroke="rgba(100,160,255,0.3)" stroke-width="1"/>
+        <line x1="1130" y1="160" x2="1130" y2="300" stroke="rgba(100,160,255,0.2)" stroke-width="0.75"/>
+        <line x1="1030" y1="220" x2="1270" y2="220" stroke="rgba(100,160,255,0.2)" stroke-width="0.75"/>
+        <!-- Rooms -->
+        <rect x="1032" y="162" width="96" height="56" fill="rgba(100,160,255,0.05)" stroke="rgba(100,160,255,0.2)" stroke-width="0.5"/>
+        <rect x="1132" y="162" width="136" height="56" fill="rgba(196,164,98,0.05)" stroke="rgba(196,164,98,0.2)" stroke-width="0.5"/>
+        <rect x="1032" y="222" width="80" height="76" fill="rgba(100,160,255,0.05)" stroke="rgba(100,160,255,0.2)" stroke-width="0.5"/>
+        <rect x="1116" y="222" width="152" height="76" fill="rgba(100,255,150,0.03)" stroke="rgba(100,255,150,0.15)" stroke-width="0.5"/>
+        <!-- Access points -->
+        <circle cx="1130" cy="175" r="4" fill="#C4A462" opacity="0.7"/>
+        <circle cx="1130" cy="240" r="4" fill="#64C864" opacity="0.7"/>
+        <circle cx="1080" cy="220" r="4" fill="#C4A462" opacity="0.7"/>
+        <!-- Labels -->
+        <text x="1015" y="155" fill="rgba(196,164,98,0.6)" font-size="6" font-family="monospace">ACCESS CONTROL · FLOOR 12</text>
+      </g>
+
+      <!-- Data streams / wiring lines -->
+      <g opacity="0.2" filter="url(#glow)">
+        <line x1="490" y1="240" x2="520" y2="245" stroke="#C4A462" stroke-width="0.75"/>
+        <line x1="980" y1="245" x2="1010" y2="225" stroke="#C4A462" stroke-width="0.75"/>
+      </g>
+
+      <!-- Bottom console/desk area -->
+      <rect x="0" y="600" width="1400" height="300" fill="#050505"/>
+      <rect x="0" y="600" width="1400" height="1" fill="rgba(196,164,98,0.15)"/>
+
+      <!-- Console desk panels -->
+      <rect x="80" y="620" width="350" height="200" fill="#0a0a0a" stroke="rgba(255,255,255,0.05)" stroke-width="1" rx="2"/>
+      <rect x="90" y="630" width="330" height="90" fill="#070710" rx="1"/>
+      <!-- Waveform visualization -->
+      <g transform="translate(95, 665)" opacity="0.7">
+        <polyline points="0,10 15,-5 30,15 45,-10 60,8 75,-3 90,12 105,-8 120,5 135,-12 150,10 165,-4 175,0 190,8 205,-6 220,3 235,-9 245,0 260,11 275,-5 320,0" fill="none" stroke="rgba(196,164,98,0.6)" stroke-width="1.5"/>
+      </g>
+      <text x="95" y="735" fill="rgba(196,164,98,0.4)" font-size="6" font-family="monospace">AUDIO MATRIX · 48KHz · 32CH</text>
+
+      <!-- Network status panel -->
+      <rect x="460" y="620" width="480" height="200" fill="#0a0a0a" stroke="rgba(255,255,255,0.05)" stroke-width="1" rx="2"/>
+      <g transform="translate(475, 640)">
+        <text fill="rgba(196,164,98,0.6)" font-size="7" font-family="monospace" letter-spacing="2">NETWORK INFRASTRUCTURE</text>
+      </g>
+      <!-- Network nodes -->
+      <g transform="translate(470, 660)" opacity="0.6" filter="url(#glow)">
+        <circle cx="60" cy="60" r="18" fill="none" stroke="rgba(100,160,255,0.4)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="6" fill="rgba(100,160,255,0.5)"/>
+        <circle cx="130" cy="40" r="12" fill="none" stroke="rgba(196,164,98,0.4)" stroke-width="1"/>
+        <circle cx="130" cy="40" r="5" fill="rgba(196,164,98,0.5)"/>
+        <circle cx="200" cy="65" r="12" fill="none" stroke="rgba(100,200,100,0.4)" stroke-width="1"/>
+        <circle cx="200" cy="65" r="5" fill="rgba(100,200,100,0.5)"/>
+        <circle cx="155" cy="105" r="10" fill="none" stroke="rgba(196,164,98,0.3)" stroke-width="1"/>
+        <circle cx="155" cy="105" r="4" fill="rgba(196,164,98,0.4)"/>
+        <circle cx="95" cy="110" r="8" fill="none" stroke="rgba(100,160,255,0.3)" stroke-width="1"/>
+        <circle cx="95" cy="110" r="3" fill="rgba(100,160,255,0.4)"/>
+        <line x1="60" y1="60" x2="130" y2="40" stroke="rgba(196,164,98,0.25)" stroke-width="1"/>
+        <line x1="60" y1="60" x2="200" y2="65" stroke="rgba(100,160,255,0.2)" stroke-width="1"/>
+        <line x1="130" y1="40" x2="200" y2="65" stroke="rgba(100,200,100,0.2)" stroke-width="1"/>
+        <line x1="200" y1="65" x2="155" y2="105" stroke="rgba(196,164,98,0.2)" stroke-width="1"/>
+        <line x1="60" y1="60" x2="95" y2="110" stroke="rgba(100,160,255,0.2)" stroke-width="1"/>
+        <line x1="95" y1="110" x2="155" y2="105" stroke="rgba(196,164,98,0.15)" stroke-width="1"/>
+        <text x="240" y="20" fill="rgba(100,200,100,0.7)" font-size="6" font-family="monospace">● CORE SWITCH</text>
+        <text x="240" y="35" fill="rgba(196,164,98,0.7)" font-size="6" font-family="monospace">● ACCESS SWITCHES</text>
+        <text x="240" y="50" fill="rgba(100,160,255,0.7)" font-size="6" font-family="monospace">● ENDPOINTS · 847</text>
+        <text x="240" y="65" fill="rgba(255,255,255,0.3)" font-size="6" font-family="monospace">● LATENCY · 0.4ms</text>
+      </g>
+
+      <!-- Right console -->
+      <rect x="970" y="620" width="350" height="200" fill="#0a0a0a" stroke="rgba(255,255,255,0.05)" stroke-width="1" rx="2"/>
+      <text x="985" y="640" fill="rgba(196,164,98,0.6)" font-size="7" font-family="monospace" letter-spacing="2">SYSTEM STATUS</text>
+      <g transform="translate(985, 655)" font-family="monospace" font-size="7">
+        <rect x="0" y="0" width="120" height="12" fill="rgba(100,200,100,0.1)" rx="1"/>
+        <rect x="0" y="0" width="115" height="12" fill="rgba(100,200,100,0.3)" rx="1"/>
+        <text x="5" y="9" fill="rgba(100,200,100,0.9)">VIDEO · 96%</text>
+        <rect x="0" y="18" width="120" height="12" fill="rgba(100,160,255,0.1)" rx="1"/>
+        <rect x="0" y="18" width="108" height="12" fill="rgba(100,160,255,0.3)" rx="1"/>
+        <text x="5" y="27" fill="rgba(100,160,255,0.9)">AUDIO · 89%</text>
+        <rect x="0" y="36" width="120" height="12" fill="rgba(196,164,98,0.1)" rx="1"/>
+        <rect x="0" y="36" width="119" height="12" fill="rgba(196,164,98,0.3)" rx="1"/>
+        <text x="5" y="45" fill="rgba(196,164,98,0.9)">NETWORK · 99%</text>
+        <rect x="0" y="54" width="120" height="12" fill="rgba(100,200,100,0.1)" rx="1"/>
+        <rect x="0" y="54" width="112" height="12" fill="rgba(100,200,100,0.3)" rx="1"/>
+        <text x="5" y="63" fill="rgba(100,200,100,0.9)">ACCESS · 93%</text>
+        <text x="0" y="88" fill="rgba(255,255,255,0.25)">ALL SYSTEMS NOMINAL</text>
+        <text x="0" y="100" fill="rgba(196,164,98,0.4)">847 DEVICES · 0 ALERTS</text>
+        <text x="0" y="115" fill="rgba(255,255,255,0.15)">LAST AUDIT: 06.11.2026 · 04:22 UTC</text>
+      </g>
+
+      <!-- Ambient light reflection on desk surface -->
+      <ellipse cx="700" cy="615" rx="400" ry="15" fill="rgba(196,164,98,0.04)"/>
+    </svg>
+  </div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="hero-grid-overlay" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span class="hero-eyebrow-text">Established 2004 — Enterprise Technology Integration</span>
+    </div>
+    <h1 class="hero-headline">
+      Intelligent <em>Audio, Video</em><br>& Security Systems<br>for Modern Spaces.
+    </h1>
+    <p class="hero-subheadline">
+      Designing seamless technology experiences for commercial, residential, and enterprise environments. From a single boardroom to a global campus.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Schedule a Consultation</a>
+      <a href="#projects" class="btn-ghost">View Our Projects</a>
+    </div>
+  </div>
+
+  <div class="hero-stats" aria-hidden="true">
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="stat-projects">0<span>+</span></div>
+      <div class="hero-stat-label">Projects Delivered</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="stat-years">0<span>yr</span></div>
+      <div class="hero-stat-label">Years Experience</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="stat-cities">0<span>+</span></div>
+      <div class="hero-stat-label">Cities Served</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator" aria-hidden="true">
+    <span class="scroll-indicator-text">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── MARQUEE ── -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- ── SOLUTIONS ── -->
+<section class="solutions-section" id="solutions">
+  <div class="section-inner">
+    <div class="solutions-header">
+      <div class="reveal">
+        <div class="section-eyebrow">
+          <div class="section-eyebrow-line"></div>
+          <span class="section-eyebrow-text">Our Capabilities</span>
+        </div>
+        <h2 class="section-title">Technology solutions<br>built for <em>scale</em>.</h2>
+      </div>
+      <p class="solutions-intro reveal reveal-delay-2">
+        Every environment has unique demands. Our engineering teams design, deploy, and support integrated technology systems tailored to your operational requirements — from initial design brief to post-installation service.
+      </p>
+    </div>
+
+    <div class="solutions-grid">
+      <div class="solution-card reveal">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="16" cy="12" r="5"/><path d="M8 28c0-4.4 3.6-8 8-8s8 3.6 8 8"/><circle cx="16" cy="12" r="1" fill="currentColor"/><path d="M16 7V4M16 20v-3M9.5 9.5l-2-2M22.5 9.5l2-2"/></svg>
+        </span>
+        <div class="solution-num">01</div>
+        <div class="solution-name">Enterprise Video<br>Surveillance</div>
+        <div class="solution-desc">Full-scale CCTV infrastructure for campuses, towers, and multi-site portfolios. Centralized management with 4K and 8K recording capability.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-1">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="8" width="24" height="16" rx="2"/><circle cx="16" cy="16" r="4"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/><path d="M16 4v4M16 24v4M4 16H2M30 16h-2"/></svg>
+        </span>
+        <div class="solution-num">02</div>
+        <div class="solution-name">AI-Powered<br>Security Cameras</div>
+        <div class="solution-desc">Intelligent analytics with license plate recognition, facial detection, crowd monitoring, and behavioral threat analysis at the edge.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-2">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="8" width="10" height="16" rx="1"/><circle cx="8" cy="14" r="2"/><path d="M8 16v4M16 10h13M16 16h9M16 22h11M26 8l3 2-3 2"/></svg>
+        </span>
+        <div class="solution-num">03</div>
+        <div class="solution-name">Access Control<br>Systems</div>
+        <div class="solution-desc">Card, biometric, and mobile credential solutions. Visitor management, elevator controls, and real-time occupancy reporting across all access points.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-3">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 22c0-5 3.6-9 8-9s8 4 8 9"/><path d="M12 13V6"/><circle cx="12" cy="4" r="2"/><path d="M20 18c2-2 4.5-3 7-3"/><path d="M20 22c2-1 4-1.5 7-1.5"/><path d="M20 26c2 0 4 0 7 0"/></svg>
+        </span>
+        <div class="solution-num">04</div>
+        <div class="solution-name">Commercial Audio<br>Solutions</div>
+        <div class="solution-desc">Precision-engineered distributed audio for lobbies, retail floors, hospitality venues, and large performance spaces with DSP-controlled zoning.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-4">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="6" width="26" height="18" rx="2"/><path d="M10 28h12M16 24v4"/><path d="M8 14h4M8 18h4M16 12v8M20 14h4M20 18h4"/></svg>
+        </span>
+        <div class="solution-num">05</div>
+        <div class="solution-name">Conference Room<br>& Collaboration</div>
+        <div class="solution-desc">Fully integrated meeting environments: video conferencing, touch controls, acoustic treatment, and unified communication platforms for hybrid workforces.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-5">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="4" width="28" height="20" rx="1"/><line x1="10" y1="4" x2="10" y2="24"/><line x1="18" y1="4" x2="18" y2="24"/><line x1="2" y1="12" x2="30" y2="12"/><rect x="4" y="6" width="4" height="4" rx="0.5" fill="rgba(196,164,98,0.3)" stroke="none"/></svg>
+        </span>
+        <div class="solution-num">06</div>
+        <div class="solution-name">Video Walls<br>& Digital Signage</div>
+        <div class="solution-desc">Architectural LED installations, ultra-narrow bezel displays, and managed content delivery systems for lobbies, trading floors, and public venues.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-6">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="24" height="24" rx="2"/><path d="M4 12h24M12 4v24M20 4v8M20 12v4M8 18h4M8 22h4"/><circle cx="22" cy="20" r="4"/><path d="M24 22l2 2"/></svg>
+        </span>
+        <div class="solution-num">07</div>
+        <div class="solution-name">Smart Building<br>Integration</div>
+        <div class="solution-desc">BAS and IoT convergence: HVAC, lighting, energy, and security systems unified under a single platform for intelligent building operations.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="solution-card reveal reveal-delay-7">
+        <span class="solution-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="16" cy="16" r="3"/><circle cx="6" cy="8" r="2"/><circle cx="26" cy="8" r="2"/><circle cx="6" cy="24" r="2"/><circle cx="26" cy="24" r="2"/><line x1="8" y1="9" x2="14" y2="14"/><line x1="24" y1="9" x2="18" y2="14"/><line x1="8" y1="23" x2="14" y2="18"/><line x1="24" y1="23" x2="18" y2="18"/></svg>
+        </span>
+        <div class="solution-num">08</div>
+        <div class="solution-name">Network<br>Infrastructure</div>
+        <div class="solution-desc">Structured cabling, fiber optic backbone, enterprise switching, and wireless design that forms the foundation of every system we integrate.</div>
+        <span class="solution-arrow" aria-hidden="true">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section class="stats-section">
+  <div class="section-inner">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-number"><span class="count" data-target="2400">0</span><span class="stat-unit">+</span></div>
+        <div class="stat-label">Systems Deployed</div>
+        <div class="stat-desc">Across commercial, residential, and public sector clients since 2004</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <div class="stat-number"><span class="count" data-target="99">0</span><span class="stat-unit">.7%</span></div>
+        <div class="stat-label">Uptime SLA</div>
+        <div class="stat-desc">Guaranteed availability backed by 24/7 NOC monitoring and rapid response</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <div class="stat-number"><span class="count" data-target="48">0</span><span class="stat-unit">hr</span></div>
+        <div class="stat-label">Response Guarantee</div>
+        <div class="stat-desc">Critical issue resolution commitment under all managed service agreements</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-4">
+        <div class="stat-number"><span class="count" data-target="320">0</span><span class="stat-unit">M+</span></div>
+        <div class="stat-label">Sq Ft Integrated</div>
+        <div class="stat-desc">Square footage of commercial space enhanced with MSS technology environments</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INDUSTRIES ── -->
+<section class="industries-section" id="industries">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">
+        <div class="section-eyebrow-line"></div>
+        <span class="section-eyebrow-text">Sectors We Serve</span>
+      </div>
+      <h2 class="section-title">Built for the environments<br>that demand <em>excellence</em>.</h2>
+    </div>
+
+    <div class="industries-grid" style="margin-top: 5rem;">
+      <div class="industry-card reveal">
+        <div class="industry-bg ind-corporate">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.5">
+            <rect x="80" y="50" width="120" height="400" fill="#0f2040"/>
+            <rect x="220" y="20" width="160" height="430" fill="#122855"/>
+            <rect x="400" y="80" width="100" height="370" fill="#0f2040"/>
+            <g opacity="0.6">
+              <rect x="90" y="70" width="18" height="12" fill="#C4A462" rx="1"/>
+              <rect x="118" y="70" width="18" height="12" fill="#C4A462" rx="1" opacity="0.5"/>
+              <rect x="90" y="96" width="18" height="12" fill="#C4A462" rx="1" opacity="0.8"/>
+              <rect x="230" y="40" width="20" height="13" fill="#6496FF" rx="1"/>
+              <rect x="260" y="40" width="20" height="13" fill="#6496FF" rx="1" opacity="0.6"/>
+              <rect x="290" y="40" width="20" height="13" fill="#6496FF" rx="1" opacity="0.8"/>
+              <rect x="320" y="40" width="20" height="13" fill="#C4A462" rx="1" opacity="0.4"/>
+            </g>
+          </svg>
+        </div>
+        <div class="industry-gradient"></div>
+        <div class="industry-content">
+          <div class="industry-label">Sector 01</div>
+          <div class="industry-name">Corporate<br>& Office</div>
+          <div class="industry-detail">Class A towers, headquarters, and multi-tenant office buildings with complete AV, security, and network infrastructure.</div>
+        </div>
+      </div>
+
+      <div class="industry-card reveal reveal-delay-1">
+        <div class="industry-bg ind-hospitality">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.4">
+            <rect x="50" y="60" width="500" height="390" fill="#3a2000"/>
+            <rect x="50" y="60" width="500" height="40" fill="#5a3200"/>
+            <g opacity="0.7">
+              <rect x="80" y="120" width="60" height="80" fill="#4a2800" rx="2"/>
+              <rect x="160" y="120" width="60" height="80" fill="#4a2800" rx="2"/>
+              <rect x="460" y="120" width="60" height="80" fill="#4a2800" rx="2"/>
+              <ellipse cx="300" cy="200" rx="80" ry="60" fill="#3a1e00" opacity="0.8"/>
+              <rect x="260" y="140" width="80" height="120" fill="#4a2800" rx="2" opacity="0.6"/>
+            </g>
+            <rect x="50" y="380" width="500" height="70" fill="#5a3200" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="industry-gradient"></div>
+        <div class="industry-content">
+          <div class="industry-label">Sector 02</div>
+          <div class="industry-name">Hospitality<br>& Hotels</div>
+          <div class="industry-detail">Full-property AV, in-room entertainment, ballroom systems, and enterprise-grade surveillance for luxury hotel properties.</div>
+        </div>
+      </div>
+
+      <div class="industry-card reveal reveal-delay-2">
+        <div class="industry-bg ind-residential">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.45">
+            <rect x="100" y="80" width="160" height="370" fill="#1b2a3b"/>
+            <rect x="280" y="40" width="220" height="410" fill="#243b55"/>
+            <g opacity="0.5">
+              <rect x="115" y="100" width="22" height="14" fill="#C4A462" rx="1"/>
+              <rect x="148" y="100" width="22" height="14" fill="#C4A462" rx="1" opacity="0.6"/>
+              <rect x="295" y="60" width="24" height="16" fill="#6496FF" rx="1"/>
+              <rect x="330" y="60" width="24" height="16" fill="#6496FF" rx="1" opacity="0.5"/>
+              <rect x="365" y="60" width="24" height="16" fill="#C4A462" rx="1" opacity="0.7"/>
+              <rect x="400" y="60" width="24" height="16" fill="#6496FF" rx="1" opacity="0.4"/>
+            </g>
+          </svg>
+        </div>
+        <div class="industry-gradient"></div>
+        <div class="industry-content">
+          <div class="industry-label">Sector 03</div>
+          <div class="industry-name">Luxury<br>Residential</div>
+          <div class="industry-detail">Ultra-premium smart home and building-wide automation for high-rise condominiums and private estates.</div>
+        </div>
+      </div>
+
+      <div class="industry-card reveal reveal-delay-3">
+        <div class="industry-bg ind-retail">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.4">
+            <rect x="0" y="0" width="600" height="450" fill="#1a0a2e"/>
+            <rect x="40" y="100" width="520" height="280" fill="#2d1b4e" rx="3"/>
+            <rect x="40" y="100" width="520" height="30" fill="#3d2a5e" rx="3"/>
+            <rect x="60" y="150" width="100" height="200" fill="#221040" opacity="0.8"/>
+            <rect x="180" y="150" width="100" height="200" fill="#221040" opacity="0.8"/>
+            <rect x="300" y="150" width="100" height="200" fill="#221040" opacity="0.8"/>
+            <rect x="420" y="150" width="100" height="200" fill="#221040" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="industry-gradient"></div>
+        <div class="industry-content">
+          <div class="industry-label">Sector 04</div>
+          <div class="industry-name">Retail &<br>Mixed-Use</div>
+          <div class="industry-detail">Digital signage networks, background audio, loss prevention cameras, and customer analytics for flagship retail and lifestyle centers.</div>
+        </div>
+      </div>
+
+      <div class="industry-card reveal reveal-delay-4">
+        <div class="industry-bg ind-healthcare">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.4">
+            <rect x="0" y="0" width="600" height="450" fill="#0a1628"/>
+            <rect x="60" y="60" width="480" height="360" fill="#0e2040" rx="4"/>
+            <line x1="60" y1="200" x2="540" y2="200" stroke="rgba(100,160,255,0.3)" stroke-width="1"/>
+            <line x1="300" y1="60" x2="300" y2="420" stroke="rgba(100,160,255,0.3)" stroke-width="1"/>
+            <circle cx="300" cy="200" r="40" fill="none" stroke="rgba(100,160,255,0.4)" stroke-width="2"/>
+            <rect x="285" y="180" width="30" height="5" fill="rgba(100,160,255,0.6)" rx="1"/>
+            <rect x="297" y="168" width="5" height="30" fill="rgba(100,160,255,0.6)" rx="1"/>
+          </svg>
+        </div>
+        <div class="industry-gradient"></div>
+        <div class="industry-content">
+          <div class="industry-label">Sector 05</div>
+          <div class="industry-name">Healthcare<br>& Education</div>
+          <div class="industry-detail">HIPAA-compliant surveillance, emergency communication, wayfinding signage, and unified communications for campuses and medical facilities.</div>
+        </div>
+      </div>
+
+      <div class="industry-card reveal reveal-delay-5">
+        <div class="industry-bg ind-industrial">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.45">
+            <rect x="0" y="0" width="600" height="450" fill="#111"/>
+            <rect x="30" y="120" width="180" height="330" fill="#222" rx="1"/>
+            <rect x="220" y="80" width="160" height="370" fill="#2a2a2a" rx="1"/>
+            <rect x="390" y="140" width="180" height="310" fill="#1e1e1e" rx="1"/>
+            <rect x="30" y="80" width="60" height="40" fill="#333" rx="1"/>
+            <rect x="100" y="60" width="40" height="60" fill="#2a2a2a" rx="1"/>
+            <g opacity="0.6">
+              <rect x="50" y="140" width="16" height="10" fill="#C4A462" rx="1"/>
+              <rect x="76" y="140" width="16" height="10" fill="#C4A462" rx="1" opacity="0.5"/>
+              <rect x="240" y="100" width="20" height="12" fill="#6496FF" rx="1"/>
+              <rect x="270" y="100" width="20" height="12" fill="#6496FF" rx="1" opacity="0.6"/>
+            </g>
+          </svg>
+        </div>
+        <div class="industry-gradient"></div>
+        <div class="industry-content">
+          <div class="industry-label">Sector 06</div>
+          <div class="industry-name">Industrial<br>& Logistics</div>
+          <div class="industry-detail">Ruggedized surveillance, perimeter detection, intercom, and access control for warehouses, data centers, and critical infrastructure.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROJECTS ── -->
+<section class="projects-section" id="projects">
+  <div class="section-inner">
+    <div class="projects-header reveal">
+      <div>
+        <div class="section-eyebrow">
+          <div class="section-eyebrow-line"></div>
+          <span class="section-eyebrow-text">Selected Work</span>
+        </div>
+        <h2 class="section-title">Projects that define<br>a <em>new standard</em>.</h2>
+      </div>
+      <div class="projects-filter">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Commercial</button>
+        <button class="filter-btn">Residential</button>
+        <button class="filter-btn">Hospitality</button>
+      </div>
+    </div>
+
+    <div class="projects-grid">
+      <!-- Large featured project -->
+      <div class="project-card large reveal">
+        <div class="project-visual">
+          <div class="project-scene">
+            <svg viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;object-fit:cover">
+              <defs>
+                <radialGradient id="pg1" cx="50%" cy="40%" r="70%">
+                  <stop offset="0%" stop-color="#0f1e40"/>
+                  <stop offset="100%" stop-color="#050a15"/>
+                </radialGradient>
+              </defs>
+              <rect width="1200" height="520" fill="url(#pg1)"/>
+              <!-- Tower exterior night scene -->
+              <rect x="200" y="0" width="200" height="520" fill="#0d1a3a"/>
+              <rect x="430" y="0" width="340" height="520" fill="#101e45"/>
+              <rect x="800" y="60" width="200" height="460" fill="#0d1a3a"/>
+              <!-- Windows grid -->
+              <g fill="#C4A462" opacity="0.5">
+                <rect x="215" y="20" width="14" height="9" rx="1"/><rect x="240" y="20" width="14" height="9" rx="1" opacity="0.6"/><rect x="265" y="20" width="14" height="9" rx="1"/>
+                <rect x="215" y="42" width="14" height="9" rx="1" opacity="0.4"/><rect x="240" y="42" width="14" height="9" rx="1"/><rect x="265" y="42" width="14" height="9" rx="1" opacity="0.7"/>
+                <rect x="215" y="64" width="14" height="9" rx="1"/><rect x="240" y="64" width="14" height="9" rx="1" opacity="0.3"/><rect x="265" y="64" width="14" height="9" rx="1"/>
+              </g>
+              <g fill="#6496FF" opacity="0.4">
+                <rect x="450" y="20" width="18" height="11" rx="1"/><rect x="480" y="20" width="18" height="11" rx="1" opacity="0.7"/>
+                <rect x="510" y="20" width="18" height="11" rx="1"/><rect x="540" y="20" width="18" height="11" rx="1" opacity="0.5"/>
+                <rect x="570" y="20" width="18" height="11" rx="1"/><rect x="600" y="20" width="18" height="11" rx="1" opacity="0.6"/>
+                <rect x="630" y="20" width="18" height="11" rx="1"/>
+                <rect x="450" y="45" width="18" height="11" rx="1" opacity="0.5"/><rect x="510" y="45" width="18" height="11" rx="1"/>
+                <rect x="570" y="45" width="18" height="11" rx="1" opacity="0.4"/><rect x="630" y="45" width="18" height="11" rx="1" opacity="0.7"/>
+              </g>
+              <!-- Ground/plaza -->
+              <rect x="0" y="440" width="1200" height="80" fill="#080d18"/>
+              <rect x="0" y="440" width="1200" height="2" fill="rgba(196,164,98,0.15)"/>
+              <!-- Lobby interior visible -->
+              <rect x="430" y="380" width="340" height="60" fill="rgba(196,164,98,0.08)"/>
+              <!-- HUD overlays -->
+              <rect x="820" y="100" width="80" height="40" fill="none" stroke="rgba(196,164,98,0.5)" stroke-width="1"/>
+              <text x="826" y="115" fill="rgba(196,164,98,0.7)" font-size="7" font-family="monospace">ACCESS PT</text>
+              <text x="826" y="128" fill="rgba(196,164,98,0.4)" font-size="6" font-family="monospace">FLOOR 24-40</text>
+              <line x1="820" y1="100" x2="810" y2="90" stroke="rgba(196,164,98,0.5)" stroke-width="1"/>
+              <circle cx="808" cy="88" r="3" fill="rgba(196,164,98,0.6)"/>
+              <text x="50" y="480" fill="rgba(255,255,255,0.1)" font-family="monospace" font-size="9" letter-spacing="3">ONE MERIDIAN TOWER · CHICAGO, IL · 2024</text>
+            </svg>
+          </div>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <div class="project-meta">
+            <div class="project-tag">Commercial Office · 2024</div>
+            <div class="project-name">One Meridian Tower</div>
+            <div class="project-location">Chicago, Illinois — 62-story Class A Office Tower</div>
+          </div>
+          <div class="project-arrow" aria-label="View project">→</div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-visual">
+          <div class="project-scene">
+            <svg viewBox="0 0 600 338" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <defs>
+                <radialGradient id="pg2" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stop-color="#2a1500"/>
+                  <stop offset="100%" stop-color="#0a0800"/>
+                </radialGradient>
+              </defs>
+              <rect width="600" height="338" fill="url(#pg2)"/>
+              <!-- Hotel ballroom -->
+              <rect x="30" y="60" width="540" height="220" fill="#1a0e00"/>
+              <!-- Stage and video wall -->
+              <rect x="30" y="60" width="540" height="100" fill="#0f0900"/>
+              <!-- LED video wall panels -->
+              <g>
+                <rect x="80" y="70" width="80" height="80" fill="#0a1a3a" stroke="rgba(196,164,98,0.3)" stroke-width="0.5"/>
+                <rect x="165" y="70" width="80" height="80" fill="#0d1e40" stroke="rgba(196,164,98,0.3)" stroke-width="0.5"/>
+                <rect x="250" y="70" width="100" height="80" fill="#0f2248" stroke="rgba(196,164,98,0.5)" stroke-width="1"/>
+                <text x="275" y="116" fill="rgba(196,164,98,0.5)" font-size="11" font-family="monospace" text-anchor="middle">MSS</text>
+                <rect x="355" y="70" width="80" height="80" fill="#0d1e40" stroke="rgba(196,164,98,0.3)" stroke-width="0.5"/>
+                <rect x="440" y="70" width="80" height="80" fill="#0a1a3a" stroke="rgba(196,164,98,0.3)" stroke-width="0.5"/>
+              </g>
+              <!-- Chandeliers -->
+              <ellipse cx="180" cy="145" rx="30" ry="8" fill="none" stroke="rgba(196,164,98,0.4)" stroke-width="1"/>
+              <ellipse cx="420" cy="145" rx="30" ry="8" fill="none" stroke="rgba(196,164,98,0.4)" stroke-width="1"/>
+              <line x1="180" y1="60" x2="180" y2="137" stroke="rgba(196,164,98,0.3)" stroke-width="0.75"/>
+              <line x1="420" y1="60" x2="420" y2="137" stroke="rgba(196,164,98,0.3)" stroke-width="0.75"/>
+              <!-- Tables -->
+              <g fill="#221200" stroke="rgba(196,164,98,0.15)" stroke-width="0.5">
+                <ellipse cx="120" cy="230" rx="45" ry="25"/>
+                <ellipse cx="240" cy="240" rx="45" ry="25"/>
+                <ellipse cx="360" cy="235" rx="45" ry="25"/>
+                <ellipse cx="480" cy="230" rx="45" ry="25"/>
+              </g>
+              <text x="30" y="325" fill="rgba(255,255,255,0.08)" font-family="monospace" font-size="7" letter-spacing="2">THE GRAND HOTEL BALLROOM · MIAMI, FL</text>
+            </svg>
+          </div>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <div class="project-meta">
+            <div class="project-tag">Hospitality · 2024</div>
+            <div class="project-name">The Grand Hotel & Residences</div>
+            <div class="project-location">Miami, Florida</div>
+          </div>
+          <div class="project-arrow" aria-label="View project">→</div>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="project-card reveal reveal-delay-2">
+        <div class="project-visual">
+          <div class="project-scene">
+            <svg viewBox="0 0 600 338" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <rect width="600" height="338" fill="#0a0a14"/>
+              <!-- Command center -->
+              <rect x="0" y="180" width="600" height="160" fill="#060610"/>
+              <rect x="0" y="180" width="600" height="2" fill="rgba(196,164,98,0.1)"/>
+              <!-- Large video wall -->
+              <rect x="30" y="20" width="540" height="150" fill="#060614" stroke="rgba(100,160,255,0.2)" stroke-width="1"/>
+              <!-- Video wall content dividers -->
+              <line x1="210" y1="20" x2="210" y2="170" stroke="rgba(100,160,255,0.15)" stroke-width="1"/>
+              <line x1="390" y1="20" x2="390" y2="170" stroke="rgba(100,160,255,0.15)" stroke-width="1"/>
+              <!-- Map display -->
+              <rect x="31" y="21" width="178" height="148" fill="#060a1a"/>
+              <line x1="31" y1="80" x2="209" y2="80" stroke="rgba(100,160,255,0.1)" stroke-width="0.5"/>
+              <line x1="120" y1="21" x2="120" y2="169" stroke="rgba(100,160,255,0.1)" stroke-width="0.5"/>
+              <circle cx="100" cy="70" r="5" fill="rgba(196,164,98,0.6)"/>
+              <circle cx="150" cy="100" r="4" fill="rgba(100,200,100,0.6)"/>
+              <circle cx="80" cy="120" r="3" fill="rgba(196,164,98,0.4)"/>
+              <!-- Center display -->
+              <rect x="211" y="21" width="178" height="148" fill="#040814"/>
+              <text x="300" y="100" fill="rgba(196,164,98,0.4)" font-size="9" font-family="monospace" text-anchor="middle">LIVE MONITOR</text>
+              <!-- Analytics -->
+              <rect x="391" y="21" width="178" height="148" fill="#060612"/>
+              <polyline points="395,120 420,90 445,105 470,70 495,85 520,60 545,75 565,55" fill="none" stroke="rgba(196,164,98,0.5)" stroke-width="1.5"/>
+              <!-- Console desks -->
+              <rect x="60" y="210" width="140" height="80" fill="#0c0c1a" rx="2"/>
+              <rect x="230" y="200" width="140" height="90" fill="#0c0c1a" rx="2"/>
+              <rect x="400" y="210" width="140" height="80" fill="#0c0c1a" rx="2"/>
+              <text x="20" y="330" fill="rgba(255,255,255,0.08)" font-family="monospace" font-size="7" letter-spacing="2">SECURITY OPERATIONS CENTER · NEW YORK, NY</text>
+            </svg>
+          </div>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <div class="project-meta">
+            <div class="project-tag">Enterprise Security · 2023</div>
+            <div class="project-name">Northeast Security Operations Center</div>
+            <div class="project-location">New York, New York</div>
+          </div>
+          <div class="project-arrow" aria-label="View project">→</div>
+        </div>
+      </div>
+
+      <!-- Project 4 -->
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-visual">
+          <div class="project-scene">
+            <svg viewBox="0 0 600 338" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <rect width="600" height="338" fill="#0a0814"/>
+              <!-- Conference room -->
+              <rect x="0" y="0" width="600" height="338" fill="#0c0a18"/>
+              <!-- Table -->
+              <ellipse cx="300" cy="220" rx="220" ry="80" fill="#100e20" stroke="rgba(196,164,98,0.15)" stroke-width="1"/>
+              <!-- Display wall -->
+              <rect x="60" y="30" width="480" height="140" fill="#060610" stroke="rgba(100,160,255,0.25)" stroke-width="1.5"/>
+              <!-- Content on screen -->
+              <rect x="70" y="40" width="230" height="120" fill="#080816" stroke="rgba(100,160,255,0.1)" stroke-width="0.5"/>
+              <rect x="310" y="40" width="220" height="120" fill="#060814"/>
+              <!-- Video conf boxes -->
+              <rect x="75" y="45" width="100" height="70" fill="#0a0c1e" stroke="rgba(100,160,255,0.2)" stroke-width="0.5"/>
+              <rect x="185" y="45" width="110" height="70" fill="#0a0c1e" stroke="rgba(100,160,255,0.2)" stroke-width="0.5"/>
+              <circle cx="125" cy="75" r="18" fill="#141422" stroke="rgba(100,160,255,0.2)" stroke-width="0.5"/>
+              <circle cx="240" cy="72" r="16" fill="#141422" stroke="rgba(100,160,255,0.2)" stroke-width="0.5"/>
+              <!-- Chart on right screen -->
+              <g transform="translate(315, 50)" opacity="0.6">
+                <rect x="0" y="80" width="20" height="30" fill="rgba(196,164,98,0.4)" rx="1"/>
+                <rect x="30" y="55" width="20" height="55" fill="rgba(196,164,98,0.5)" rx="1"/>
+                <rect x="60" y="40" width="20" height="70" fill="rgba(196,164,98,0.6)" rx="1"/>
+                <rect x="90" y="60" width="20" height="50" fill="rgba(196,164,98,0.45)" rx="1"/>
+                <rect x="120" y="30" width="20" height="80" fill="rgba(196,164,98,0.7)" rx="1"/>
+                <rect x="150" y="50" width="20" height="60" fill="rgba(196,164,98,0.5)" rx="1"/>
+                <line x1="0" y1="110" x2="195" y2="110" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+              </g>
+              <!-- Control panel on table -->
+              <rect x="260" y="195" width="80" height="30" fill="#141428" rx="2" stroke="rgba(196,164,98,0.2)" stroke-width="0.5"/>
+              <!-- Chairs silhouette -->
+              <g fill="#0e0c1e" stroke="rgba(255,255,255,0.05)" stroke-width="0.5">
+                <ellipse cx="160" cy="200" rx="22" ry="12" transform="rotate(-20,160,200)"/>
+                <ellipse cx="260" cy="170" rx="22" ry="12" transform="rotate(-5,260,170)"/>
+                <ellipse cx="370" cy="170" rx="22" ry="12" transform="rotate(5,370,170)"/>
+                <ellipse cx="440" cy="200" rx="22" ry="12" transform="rotate(20,440,200)"/>
+              </g>
+              <text x="20" y="328" fill="rgba(255,255,255,0.08)" font-family="monospace" font-size="7" letter-spacing="2">EXECUTIVE BOARDROOM · DALLAS, TX</text>
+            </svg>
+          </div>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <div class="project-meta">
+            <div class="project-tag">Conference Technology · 2024</div>
+            <div class="project-name">Pinnacle Group Executive Center</div>
+            <div class="project-location">Dallas, Texas</div>
+          </div>
+          <div class="project-arrow" aria-label="View project">→</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:4rem;" class="reveal">
+      <a href="#contact" class="btn-ghost">View Full Portfolio</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about-section" id="about">
+  <div class="section-inner">
+    <div class="about-inner">
+      <div class="about-visual reveal">
+        <div class="about-main-image">
+          <svg viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+            <defs>
+              <radialGradient id="ag1" cx="40%" cy="40%" r="70%">
+                <stop offset="0%" stop-color="#141420"/>
+                <stop offset="100%" stop-color="#060610"/>
+              </radialGradient>
+            </defs>
+            <rect width="480" height="600" fill="url(#ag1)"/>
+            <!-- Engineer at work -->
+            <!-- Dark workspace with monitors -->
+            <rect x="40" y="200" width="400" height="300" fill="#0a0a12" rx="2"/>
+            <rect x="40" y="200" width="400" height="20" fill="#0d0d18"/>
+            <!-- Three monitors -->
+            <rect x="60" y="240" width="110" height="70" fill="#060614" stroke="rgba(196,164,98,0.2)" stroke-width="1"/>
+            <rect x="185" y="220" width="130" height="90" fill="#060614" stroke="rgba(196,164,98,0.4)" stroke-width="1.5"/>
+            <rect x="330" y="240" width="90" height="70" fill="#060614" stroke="rgba(196,164,98,0.2)" stroke-width="1"/>
+            <!-- Monitor content -->
+            <g fill="rgba(100,160,255,0.3)" font-family="monospace" font-size="5">
+              <text x="65" y="255">SYSTEM DESIGN v4.2</text>
+              <rect x="65" y="260" width="60" height="3" fill="rgba(196,164,98,0.3)"/>
+              <rect x="65" y="268" width="80" height="3" fill="rgba(255,255,255,0.15)"/>
+              <rect x="65" y="276" width="70" height="3" fill="rgba(255,255,255,0.15)"/>
+              <rect x="65" y="284" width="90" height="3" fill="rgba(196,164,98,0.2)"/>
+              <rect x="65" y="292" width="75" height="3" fill="rgba(255,255,255,0.15)"/>
+            </g>
+            <!-- Floor plan on center monitor -->
+            <g transform="translate(190, 228)">
+              <rect x="0" y="0" width="120" height="75" fill="#080812" rx="0"/>
+              <rect x="5" y="5" width="110" height="65" fill="none" stroke="rgba(100,160,255,0.25)" stroke-width="0.75"/>
+              <line x1="55" y1="5" x2="55" y2="70" stroke="rgba(100,160,255,0.15)" stroke-width="0.5"/>
+              <line x1="5" y1="38" x2="115" y2="38" stroke="rgba(100,160,255,0.15)" stroke-width="0.5"/>
+              <circle cx="55" cy="38" r="8" fill="none" stroke="rgba(196,164,98,0.5)" stroke-width="1"/>
+              <circle cx="28" cy="20" r="3" fill="rgba(196,164,98,0.5)"/>
+              <circle cx="85" cy="55" r="3" fill="rgba(100,200,100,0.5)"/>
+            </g>
+            <!-- Table surface -->
+            <rect x="40" y="360" width="400" height="30" fill="#0c0c1a" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+            <!-- Keyboard -->
+            <rect x="180" y="362" width="120" height="18" fill="#0e0e1e" rx="1" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+            <!-- Notebook -->
+            <rect x="340" y="355" width="80" height="45" fill="#0a0a14" stroke="rgba(196,164,98,0.2)" stroke-width="0.5" transform="rotate(-3,380,378)"/>
+            <!-- Ambient light bar -->
+            <rect x="40" y="198" width="400" height="2" fill="rgba(196,164,98,0.3)"/>
+
+            <!-- Gold accent stripes -->
+            <rect x="0" y="0" width="4" height="600" fill="rgba(196,164,98,0.4)"/>
+            <rect x="0" y="0" width="4" height="180" fill="rgba(196,164,98,0.6)"/>
+
+            <!-- Company detail in top section -->
+            <rect x="20" y="40" width="440" height="150" fill="rgba(196,164,98,0.03)"/>
+            <text x="40" y="75" fill="rgba(255,255,255,0.5)" font-family="'Cormorant Garamond', serif" font-size="28" font-weight="300">Media Systems</text>
+            <text x="40" y="105" fill="rgba(255,255,255,0.5)" font-family="'Cormorant Garamond', serif" font-size="28" font-weight="300" font-style="italic">Solutions</text>
+            <rect x="40" y="120" width="60" height="1" fill="rgba(196,164,98,0.5)"/>
+            <text x="40" y="148" fill="rgba(196,164,98,0.5)" font-family="monospace" font-size="7" letter-spacing="3">ENGINEERING EXCELLENCE</text>
+            <text x="40" y="165" fill="rgba(255,255,255,0.25)" font-family="monospace" font-size="7" letter-spacing="2">EST. 2004 · CERTIFIED INTEGRATORS</text>
+          </svg>
+          <div class="about-badge">
+            <div class="about-badge-num">20</div>
+            <div class="about-badge-label">Years of<br>Excellence</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-text">
+        <div class="reveal">
+          <div class="section-eyebrow">
+            <div class="section-eyebrow-line"></div>
+            <span class="section-eyebrow-text">About MSS</span>
+          </div>
+          <h2 class="section-title">We engineer the<br>invisible <em>architecture</em><br>of modern buildings.</h2>
+        </div>
+        <p class="about-body reveal reveal-delay-2">
+          Media Systems Solutions was founded on a single conviction: that technology should be invisible in its operation and extraordinary in its impact. For twenty years, we have partnered with developers, architects, and corporate clients to design and deploy integrated systems that transform how buildings communicate, operate, and protect.
+        </p>
+        <p class="about-body reveal reveal-delay-3" style="margin-top:-1rem;">
+          Our team of certified engineers, project managers, and post-installation technicians brings rigorous precision to every engagement — from a single conference room to a 60-story mixed-use tower.
+        </p>
+
+        <div class="about-values reveal reveal-delay-4">
+          <div class="about-value">
+            <div class="about-value-title">Precision Engineering</div>
+            <div class="about-value-text">Every system is designed to exact specifications, installed with care, and validated against performance benchmarks before handover.</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-title">Lifecycle Partnership</div>
+            <div class="about-value-text">Our relationship extends beyond installation — managed services, 24/7 monitoring, and proactive maintenance on every platform.</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-title">Manufacturer Agnostic</div>
+            <div class="about-value-text">We specify the right technology for the right environment, drawing from 40+ certified manufacturer partnerships.</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-title">Security First Design</div>
+            <div class="about-value-text">Every network, every system, every credential is architected with defense-in-depth security as the foundational principle.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials-section">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-eyebrow" style="justify-content:center;">
+        <div class="section-eyebrow-line"></div>
+        <span class="section-eyebrow-text">Client Perspectives</span>
+        <div class="section-eyebrow-line" style="transform:scaleX(-1)"></div>
+      </div>
+      <h2 class="section-title">Trusted by those who<br>accept nothing <em>less</em>.</h2>
+    </div>
+  </div>
+
+  <div class="testimonials-track-wrap" style="margin-top:4rem;">
+    <div class="testimonials-track" id="testimonialsTrack"></div>
+  </div>
+</section>
+
+<!-- ── PARTNERS ── -->
+<section class="partners-section">
+  <div class="section-inner">
+    <div class="partners-label">Certified Technology Partners</div>
+    <div class="partners-grid">
+      <div class="partner-item reveal"><span class="partner-name">Axis Communications</span></div>
+      <div class="partner-item reveal reveal-delay-1"><span class="partner-name">Crestron</span></div>
+      <div class="partner-item reveal reveal-delay-2"><span class="partner-name">Milestone Systems</span></div>
+      <div class="partner-item reveal reveal-delay-3"><span class="partner-name">Biamp Audio</span></div>
+      <div class="partner-item reveal reveal-delay-4"><span class="partner-name">Cisco Meraki</span></div>
+      <div class="partner-item reveal reveal-delay-5"><span class="partner-name">Samsung Display</span></div>
+    </div>
+    <div class="partners-grid" style="margin-top:0; border-top: 1px solid var(--border);">
+      <div class="partner-item reveal"><span class="partner-name">Lenel S2</span></div>
+      <div class="partner-item reveal reveal-delay-1"><span class="partner-name">Extron Electronics</span></div>
+      <div class="partner-item reveal reveal-delay-2"><span class="partner-name">QSC Audio</span></div>
+      <div class="partner-item reveal reveal-delay-3"><span class="partner-name">Genetec</span></div>
+      <div class="partner-item reveal reveal-delay-4"><span class="partner-name">Planar Systems</span></div>
+      <div class="partner-item reveal reveal-delay-5"><span class="partner-name">Bosch Security</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section class="contact-section" id="contact">
+  <div class="section-inner">
+    <div class="contact-inner">
+      <div>
+        <div class="reveal">
+          <div class="section-eyebrow">
+            <div class="section-eyebrow-line"></div>
+            <span class="section-eyebrow-text">Engage MSS</span>
+          </div>
+          <h2 class="section-title">Begin your<br><em>technology</em><br>transformation.</h2>
+        </div>
+        <div class="contact-detail reveal reveal-delay-2">
+          <div class="contact-detail-label">Headquarters</div>
+          <div class="contact-detail-value">Chicago, Illinois</div>
+        </div>
+        <div class="contact-detail reveal reveal-delay-3">
+          <div class="contact-detail-label">Direct Line</div>
+          <div class="contact-detail-value">(312) 555-0190</div>
+        </div>
+        <div class="contact-detail reveal reveal-delay-4">
+          <div class="contact-detail-label">Email</div>
+          <div class="contact-detail-value">consult@mss-systems.com</div>
+        </div>
+        <div class="contact-detail reveal reveal-delay-5">
+          <div class="contact-detail-label">Response Time</div>
+          <div class="contact-detail-value" style="font-size:0.9rem; color: var(--text-mid);">All inquiries acknowledged within 4 business hours. Project consultations scheduled within 48 hours of initial qualification.</div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div style="margin-bottom:2rem;">
+          <div style="font-family:var(--font-label); font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.5rem;">Tell us about your project</div>
+          <div style="font-family:var(--font-display); font-size:1.4rem; font-weight:300; color:var(--text-mid);">Every engagement begins with a conversation — no obligation, no sales pressure.</div>
+        </div>
+        <form id="contactForm" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fname">First Name</label>
+              <input class="form-input" type="text" id="fname" placeholder="Alexandra" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lname">Last Name</label>
+              <input class="form-input" type="text" id="lname" placeholder="Chen" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input class="form-input" type="email" id="email" placeholder="a.chen@company.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone</label>
+              <input class="form-input" type="tel" id="phone" placeholder="(312) 555-0100">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="company">Company / Organization</label>
+            <input class="form-input" type="text" id="company" placeholder="Meridian Development Group">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="projecttype">Project Type</label>
+            <select class="form-select form-input" id="projecttype">
+              <option value="" style="color:#666">Select a category</option>
+              <option>Enterprise Video Surveillance</option>
+              <option>Conference Room & Collaboration</option>
+              <option>Access Control Systems</option>
+              <option>Commercial Audio</option>
+              <option>Video Wall & Digital Signage</option>
+              <option>Smart Building Integration</option>
+              <option>Network Infrastructure</option>
+              <option>Complete Campus Integration</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Project Overview</label>
+            <textarea class="form-textarea form-input" id="message" placeholder="Describe your project scope, timeline, and any specific requirements. The more detail you provide, the better we can prepare for our initial conversation."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Request Consultation →</button>
+        </form>
+        <div id="formSuccess" style="display:none; padding:2rem; border:1px solid rgba(196,164,98,0.3); text-align:center; margin-top:1rem;">
+          <div style="font-family:var(--font-display); font-size:1.5rem; margin-bottom:0.5rem; color:var(--gold);">Thank you.</div>
+          <div style="font-size:0.85rem; color:var(--text-mid);">Your inquiry has been received. A member of our team will be in touch within 4 business hours.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">Media Systems Solutions</div>
+        <div class="footer-brand-sub">Technology Integration Specialists</div>
+        <p class="footer-tagline">Designing intelligent audio, video, and security environments for the world's most demanding spaces since 2004.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Solutions</div>
+        <ul class="footer-links">
+          <li><a href="#solutions">Video Surveillance</a></li>
+          <li><a href="#solutions">Access Control</a></li>
+          <li><a href="#solutions">Commercial Audio</a></li>
+          <li><a href="#solutions">Conference Systems</a></li>
+          <li><a href="#solutions">Digital Signage</a></li>
+          <li><a href="#solutions">Network Infrastructure</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Industries</div>
+        <ul class="footer-links">
+          <li><a href="#industries">Corporate Office</a></li>
+          <li><a href="#industries">Hospitality</a></li>
+          <li><a href="#industries">Luxury Residential</a></li>
+          <li><a href="#industries">Retail & Mixed-Use</a></li>
+          <li><a href="#industries">Healthcare</a></li>
+          <li><a href="#industries">Industrial</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#about">About MSS</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Careers</a></li>
+          <li><a href="#contact">Partners</a></li>
+          <li><a href="#contact">Support Portal</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Media Systems Solutions. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Preferences</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── LOADER ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+    animateHeroStats();
+  }, 2200);
+});
+
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a, button, .solution-card, .industry-card, .project-card, .filter-btn').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '12px'; cursor.style.height = '12px';
+    ring.style.width = '52px'; ring.style.height = '52px';
+    ring.style.borderColor = 'rgba(196,164,98,0.6)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '8px'; cursor.style.height = '8px';
+    ring.style.width = '36px'; ring.style.height = '36px';
+    ring.style.borderColor = 'rgba(196,164,98,0.4)';
+  });
+});
+
+// ── NAV SCROLL ──
+const navbar = document.getElementById('navbar');
+const floatCta = document.getElementById('floatCta');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) { navbar.classList.add('scrolled'); floatCta.classList.add('visible'); }
+  else { navbar.classList.remove('scrolled'); floatCta.classList.remove('visible'); }
+});
+
+// ── HAMBURGER ──
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+});
+document.querySelectorAll('.mobile-link').forEach(a => {
+  a.addEventListener('click', () => { hamburger.classList.remove('open'); mobileNav.classList.remove('open'); });
+});
+
+// ── REVEAL ON SCROLL ──
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+// ── COUNTER ANIMATION ──
+function animateHeroStats() {
+  const targets = [{ el: 'stat-projects', target: 850 }, { el: 'stat-years', target: 20 }, { el: 'stat-cities', target: 40 }];
+  targets.forEach(({ el, target }) => {
+    const elem = document.getElementById(el);
+    if (!elem) return;
+    let start = 0;
+    const step = target / 60;
+    const interval = setInterval(() => {
+      start = Math.min(start + step, target);
+      elem.childNodes[0].textContent = Math.floor(start);
+      if (start >= target) clearInterval(interval);
+    }, 25);
+  });
+}
+
+// ── COUNT-UP for stats section ──
+const countEls = document.querySelectorAll('.count');
+const countObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      let current = 0;
+      const increment = target / 70;
+      const timer = setInterval(() => {
+        current = Math.min(current + increment, target);
+        el.textContent = Math.floor(current);
+        if (current >= target) clearInterval(timer);
+      }, 20);
+      countObs.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+countEls.forEach(el => countObs.observe(el));
+
+// ── MARQUEE ──
+const marqueeItems = [
+  'Enterprise Video Surveillance', 'AI Security Analytics', 'Access Control', 'Structured Cabling',
+  'Conference Room AV', 'Video Walls', 'Digital Signage', 'Smart Building Integration',
+  'Distributed Audio', 'Network Infrastructure', 'SOC Design', 'Managed Services',
+  'Enterprise Video Surveillance', 'AI Security Analytics', 'Access Control', 'Structured Cabling',
+  'Conference Room AV', 'Video Walls', 'Digital Signage', 'Smart Building Integration',
+  'Distributed Audio', 'Network Infrastructure', 'SOC Design', 'Managed Services'
+];
+const track = document.getElementById('marqueeTrack');
+marqueeItems.forEach(item => {
+  const span = document.createElement('span');
+  span.className = 'marquee-item';
+  span.innerHTML = `<span class="marquee-dot"></span>${item}`;
+  track.appendChild(span);
+});
+
+// ── TESTIMONIALS ──
+const testimonials = [
+  { quote: "The team at MSS delivered a surveillance and access control infrastructure that exceeded every specification. The integration across our 47-story tower was seamless — we've had zero downtime in 18 months of operation.", name: "Jonathan Voss", role: "VP of Facilities, Meridian Properties", initials: "JV" },
+  { quote: "Our trading floor video wall is a centerpiece — both functionally and architecturally. MSS understood that we needed not just technology, but an environment that communicates confidence to our clients.", name: "Priya Mehta", role: "COO, Northgate Capital Partners", initials: "PM" },
+  { quote: "From the initial design brief to the final commissioning walkthrough, MSS demonstrated a level of professionalism and technical depth we hadn't encountered with other integrators. They've become our exclusive technology partner.", name: "Marcus Delacroix", role: "Director of Development, Sable Group", initials: "MD" },
+  { quote: "The boardroom AV system they designed has transformed how we run executive meetings. The acoustics, the camera tracking, the control interface — every element was thought through with extraordinary care.", name: "Sandra Lim", role: "Chief of Staff, Vantage Global", initials: "SL" },
+  { quote: "MSS designed and installed the entire audio-visual and security infrastructure for three of our hotel properties. Each one was unique, each one was flawless. They operate like an extension of our own team.", name: "David Okafor", role: "Senior VP, Grandeur Hospitality Group", initials: "DO" },
+  { quote: "Our smart building integration project involved 12 subsystems across four buildings. MSS coordinated every stakeholder, every contractor, and delivered on time and on budget. Exceptional.", name: "Erin Nakamura", role: "Asset Manager, Pacific Crest REIT", initials: "EN" }
+];
+
+const tTrack = document.getElementById('testimonialsTrack');
+[...testimonials, ...testimonials].forEach(t => {
+  const card = document.createElement('div');
+  card.className = 'testimonial-card';
+  card.innerHTML = `
+    <span class="testimonial-quote-mark" aria-hidden="true">"</span>
+    <p class="testimonial-text">${t.quote}</p>
+    <div class="testimonial-author">
+      <div class="testimonial-avatar">${t.initials}</div>
+      <div>
+        <div class="testimonial-name">${t.name}</div>
+        <div class="testimonial-role">${t.role}</div>
+      </div>
+    </div>
+  `;
+  tTrack.appendChild(card);
+});
+
+// ── FILTER BUTTONS ──
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ── FORM SUBMIT ──
+function handleSubmit(e) {
+  e.preventDefault();
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+
+// ── SMOOTH SECTION LINKS ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
